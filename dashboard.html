@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WD Panel - Dashboard</title>
+  <link rel="stylesheet" href="./assets/style.css" />
+  <script defer src="./assets/dashboard.js"></script>
+</head>
+<body class="app-body">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">WD PANEL</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="./dashboard.html" class="nav-link active">Dashboard</a>
+      <button id="logout-btn" class="nav-link nav-button">Logout</button>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="main-header">
+      <h1>Withdraw Data</h1>
+      <button id="refresh-btn" class="btn-secondary">Refresh</button>
+    </header>
+
+    <section class="card">
+      <div class="card-header">
+        <h2>Latest Requests</h2>
+        <p class="card-subtitle">Auto-fetched from Neon database via API</p>
+      </div>
+      <div class="table-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Bank + Rek + Nama</th>
+              <th>Nominal</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="withdraw-table-body">
+            <tr>
+              <td colspan="4" class="loading-row">Loading data...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p id="table-error" class="error-text mt-8"></p>
+    </section>
+  </main>
+</body>
+</html>

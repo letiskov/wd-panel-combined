@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WD Panel - Login</title>
+  <link rel="stylesheet" href="./assets/style.css" />
+  <script defer src="./assets/login.js"></script>
+</head>
+<body class="auth-body">
+  <div class="auth-card">
+    <h1 class="auth-title">WD PANEL</h1>
+    <p class="auth-subtitle">Sign in to continue</p>
+    <form id="login-form" class="auth-form">
+      <label class="field">
+        <span>Username</span>
+        <input type="text" name="username" autocomplete="username" required />
+      </label>
+      <label class="field">
+        <span>Password</span>
+        <input type="password" name="password" autocomplete="current-password" required />
+      </label>
+      <button type="submit" class="btn-primary">Login</button>
+      <p id="login-error" class="error-text"></p>
+    </form>
+  </div>
+</body>
+</html>
