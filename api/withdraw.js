@@ -24,9 +24,10 @@ export default async function handler(req, res) {
       LIMIT 500
     `;
 
+    // berhasil fetch → bukan error lagi
     return res.status(200).json({ data: rows });
   } catch (error) {
-    console.error("Error querying Neon:", error);
+    console.error("Neon query error:", error);
     return res.status(500).json({
       error: "Failed to fetch data from database",
       detail: error.message,
