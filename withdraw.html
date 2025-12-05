@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WD Panel – Withdraw</title>
+  <link rel="stylesheet" href="./assets/style.css" />
+  <script defer src="./assets/withdraw-dashboard.js"></script>
+</head>
+<body class="app-body light">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">WD PANEL</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="./withdraw.html" class="nav-link active">Withdraw</a>
+      <a href="./deposit.html" class="nav-link">Deposit</a>
+      <a href="./shift.html" class="nav-link">Shift</a>
+      <a href="./users.html" class="nav-link">Users</a>
+      <a href="./logs.html" class="nav-link">Logs</a>
+      <button id="logout-btn" class="nav-link nav-button">Logout</button>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="main-header">
+      <div>
+        <h1>Withdraw Transactions</h1>
+        <p class="subtitle">Data hasil approve dari WL, realtime per shift.</p>
+      </div>
+      <button id="refresh-btn" class="btn-primary">Refresh</button>
+    </header>
+
+    <section class="card">
+      <div class="card-header">
+        <h2>Latest Withdraw</h2>
+      </div>
+      <div class="table-wrapper">
+        <table class="table soft-zebra">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Bank + Rek + Nama</th>
+              <th>Nominal</th>
+              <th>Shift</th>
+              <th>Operator</th>
+            </tr>
+          </thead>
+          <tbody id="withdraw-table-body">
+            <tr>
+              <td colspan="6" class="loading-row">Loading data...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
