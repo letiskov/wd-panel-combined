@@ -1,36 +1,132 @@
-import { neon } from "@neondatabase/serverless";
+document.addEventListener("DOMContentLoaded", () => {
+  const tbody = document.getElementById("withdraw-table-body");
+  const errorEl = document.getElementById("table-error");
+  const refreshBtn = document.getElementById("refresh-btn");
+  const logoutBtn = document.getElementById("logout-btn");
 
-const sql = neon(process.env.DATABASE_URL);
-
-export default async function handler(req, res) {
-  if (req.method !== "GET") {
-    res.setHeader("Allow", "GET");
-    return res.status(405).json({ error: "Method not allowed" });
+  // Simple front-end auth check
+  if (localStorage.getItem("wd-auth") !== "ok") {
+    window.location.href = "/login.html";
+    return;
   }
 
-  try {
-    const rows = await sql`
-      SELECT
-        id,
-        username,
-        bank,
-        rekening,
-        nama,
-        nominal,
-        status,
-        created_at
-      FROM withdraws
-      ORDER BY created_at DESC
-      LIMIT 500
-    `;
-
-    // berhasil fetch → bukan error lagi
-    return res.status(200).json({ data: rows });
-  } catch (error) {
-    console.error("Neon query error:", error);
-    return res.status(500).json({
-      error: "Failed to fetch data from database",
-      detail: error.message,
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("wd-auth");
+      window.location.href = "/login.html";
     });
   }
+
+  async function loadData() {
+    if (!tbody) return;
+
+    errorEl.textContent = "";
+    tbody.innerHTML =
+      '<tr><td colspan="4" class="loading-row">Loading data...</td></tr>';
+
+    try {
+      // FETCH API BARU YANG BENAR
+      const res = await fetch("/api/withdraw");
+
+      if (!res.ok) {
+        throw new Error("HTTP " + res.status);
+      }
+
+      const json = await res.json();
+      const rows = Array.isArray(json) ? json : json.data;
+
+      if (!rows || rows.length === 0) {
+        tbody.innerHTML =
+          '<tr><td colspan="4" class="empty-row">No data.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = "";
+
+      for (const row of rows) {
+        const tr = document.createElement("tr");
+
+        // Mapping sesuai tabel Neon lu
+        const username = row.username || "-";
+        const bank = row.bank || "-";
+        const accNo = row.rekening || "-";
+        const accName = row.nama || "-";
+        const nominalRaw = row.nominal || 0;
+
+        const bankCombined = `${bank} | ${accNo} | ${accName}`;
+
+        tr.innerHTML = `
+          <td>${escapeHtml(username)}</td>
+          <td>${escapeHtml(bankCombined)}</td>
+          <td>${formatCurrency(nominalRaw)}</td>
+          <td>
+            <button class="btn-small" data-copy="${escapeAttr(
+              `${username} | ${bankCombined} | ${nominalRaw}`
+            )}">Copy</button>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      }
+    } catch (err) {
+      console.error("Failed to load data:", err);
+      tbody.innerHTML =
+        '<tr><td colspan="4" class="error-row">Error loading data.</td></tr>';
+      errorEl.textContent = "Failed to load data.";
+    }
+  }
+
+  // Copy button handler
+  if (tbody) {
+    tbody.addEventListener("click", async (e) => {
+      const target = e.target;
+      if (target instanceof HTMLElement && target.matches("button[data-copy]")) {
+        const text = target.getAttribute("data-copy") || "";
+        try {
+          await navigator.clipboard.writeText(text);
+          target.textContent = "Copied";
+          setTimeout(() => {
+            target.textContent = "Copy";
+          }, 1200);
+        } catch (err) {
+          console.error("Clipboard failed", err);
+        }
+      }
+    });
+  }
+
+  if (refreshBtn) {
+    refreshBtn.addEventListener("click", () => {
+      loadData();
+    });
+  }
+
+  loadData();
+});
+
+// =============================
+// Utility Functions
+// =============================
+
+function formatCurrency(value) {
+  if (value === null || value === undefined || value === "") return "-";
+  const num = Number(value);
+  if (Number.isNaN(num)) return String(value);
+  return num.toLocaleString("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    maximumFractionDigits: 0,
+  });
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function escapeAttr(str) {
+  return escapeHtml(str).replace(/"/g, "&quot;");
 }
