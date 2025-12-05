@@ -43,8 +43,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const username = row.username || row.user || "-";
         const bank = row.bank || row.bank_name || "";
-        const accNo = row.account_number || row.rek || row.accountno || "";
-        const accName = row.account_name || row.name || row.nama || "";
+        const accNo = row.rekening || "-";
+        const accName = row.nama || "-";
         const nominalRaw = row.nominal || row.amount || row.total || 0;
 
         const bankCombined = [bank, accNo, accName].filter(Boolean).join(" | ");
